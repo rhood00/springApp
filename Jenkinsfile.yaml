@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Récupération du code') {
-            steps {
-                git 'https://github.com/rhood00/springApp.git'
-            }
-        }
-
         stage('Compilation et tests') {
             steps {
                 sh 'mvn clean verify'
@@ -23,7 +17,7 @@ pipeline {
             steps {
                 sh """
                 mvn sonar:sonar \
-                    -Dsonar.projectKey=webapp \
+                    -Dsonar.projectKey=springApp \
                     -Dsonar.host.url=${SONAR_HOST_URL} \
                     -Dsonar.login=${SONAR_TOKEN}
                 """
