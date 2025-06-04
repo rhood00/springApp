@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+        SONAR_HOST_URL = 'http://sonarqube-mehdiyacoubi987-dev.apps.rm3.7wse.p1.openshiftapps.com'
+        SONAR_TOKEN = 'squ_a37224b0f2a4780f73a5cd04d2227e18403d7a68'
+    }
+
+    stages {
+        stage('Récupération du code') {
+            steps {
+                git 'https://github.com/rhood00/springApp.git'
+            }
+        }
+
+        stage('Compilation et tests') {
+            steps {
+                sh 'mvn clean verify'
+            }
+        }
+
+        stage('Analyse SonarQube') {
+            steps {
+                sh """
+                mvn sonar:sonar \
+                    -Dsonar.projectKey=webapp \
+                    -Dsonar.host.url=${SONAR_HOST_URL} \
+                    -Dsonar.login=${SONAR_TOKEN}
+                """
+            }
+        }
+
+        stage('Archivage du JAR') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+    }
+}
